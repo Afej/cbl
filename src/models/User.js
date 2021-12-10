@@ -73,6 +73,13 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
+// Cascade delete wallet when a user is deleted
+UserSchema.pre("remove", async function (next) {
+  // console.log(`wallet being removed from user ${this._id}`);
+  await this.model("Wallet").deleteOne({ user_id: this._id });
+  next();
+});
+
 // Reverse populate with virtuals
 UserSchema.virtual("wallet", {
   ref: "Wallet",

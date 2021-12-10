@@ -28,6 +28,13 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("Invalid credentials", 401));
   }
 
+  // check if user account is active or disabled
+  if (user.account_status !== "active") {
+    return next(
+      new ErrorResponse("Account is disabled, contact an admin.", 401)
+    );
+  }
+
   sendTokenResponse(user, 200, res);
 });
 
@@ -50,7 +57,7 @@ exports.logout = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.getMe = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.user_id);
+  const user = await User.findById(req.user.id);
 
   res.status(200).json({
     success: true,
