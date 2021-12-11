@@ -5,7 +5,7 @@ const {
   createUser,
   updateUser,
   deleteUser,
-} = require("controllers/admin/user_auth");
+} = require("controllers/admin/users");
 
 const User = require("models/User");
 

@@ -21,7 +21,8 @@ const app = express();
 
 // Route files
 const auth = require("routes/auth");
-const admin = require("routes/admin");
+const users = require("routes/users");
+const wallet = require("routes/wallet");
 
 // Body parser
 app.use(express.json());
@@ -62,7 +63,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Mount routers
 app.use("/api/v1/auth", auth);
-app.use("/api/v1/users", admin);
+app.use("/api/v1/users", users);
+app.use("/api/v1/wallet", wallet);
 
 app.use(errorHandler);
 
