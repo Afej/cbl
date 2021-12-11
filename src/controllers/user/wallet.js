@@ -1,6 +1,5 @@
 const ErrorResponse = require("utils/errorResponse");
 const asyncHandler = require("middleware/async");
-const sendTokenResponse = require("utils/sendTokenResponse");
 const User = require("models/User");
 const Wallet = require("models/Wallet");
 
@@ -47,6 +46,7 @@ exports.deposit = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+    message: "Deposit complete!",
     data: wallet,
   });
 });
@@ -79,6 +79,11 @@ exports.withdraw = asyncHandler(async (req, res, next) => {
   // get wallet balance and remove withdrawal amount from balance
   let { balance } = wallet;
 
+  // check that balance is greater than withdrawal amount
+  if (balance < amount) {
+    return next(new ErrorResponse(`Insufficient wallet balance`, 400));
+  }
+
   balance -= amount;
 
   //update the wallet with new balance
@@ -93,6 +98,104 @@ exports.withdraw = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+    message: "Withdrawal complete!",
     data: wallet,
+  });
+});
+
+// @desc      transfer from user wallet to another wallet
+// @route     POST /api/v1/wallet/transfer
+// @access    Private/User
+exports.transfer = asyncHandler(async (req, res, next) => {
+  const { amount, receiver_email } = req.body;
+
+  const user = req.user;
+
+  // Validation
+  if (!amount || !receiver_email) {
+    return next(
+      new ErrorResponse(
+        "Please provide transfer amount and receiver email",
+        400
+      )
+    );
+  }
+
+  // check that receiver email is not logged in user email
+  if (receiver_email === user.email) {
+    return next(
+      new ErrorResponse(
+        `Unable to process transfer to logged in user account`,
+        400
+      )
+    );
+  }
+
+  // find receiver and retrieve details
+  const receiver = await User.findOne({ email: receiver_email });
+
+  if (!receiver) {
+    return next(
+      new ErrorResponse(`User not found with email of ${receiver_email}`, 404)
+    );
+  }
+
+  // get both wallets
+  let receiver_wallet = await Wallet.findOne({ user_id: receiver.id });
+
+  let user_wallet = await Wallet.findOne({ user_id: user.id });
+
+  // Make sure logged in user is wallet owner
+  if (user_wallet.user_id.toString() !== user.id) {
+    return next(
+      new ErrorResponse(
+        `User ${user.id} is not authorized to transfer from this wallet`,
+        401
+      )
+    );
+  }
+
+  // check that wallet is not null
+  if (receiver_wallet === null || user_wallet === null) {
+    return next(new ErrorResponse(`Wallet is null`, 404));
+  }
+
+  let { balance: user_balance } = user_wallet;
+  let { balance: receiver_balance } = receiver_wallet;
+
+  // check that user balance is greater than transfer amount
+  if (user_balance < amount) {
+    return next(
+      new ErrorResponse(`Insufficient wallet balance to make transfer`, 400)
+    );
+  }
+
+  user_balance -= amount; // deduct from user balance
+  receiver_balance += amount; // add to receiver balance
+
+  //update the user wallet with new balance
+  user_wallet = await Wallet.findOneAndUpdate(
+    { user_id: user.id },
+    { balance: user_balance },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  //update the receiver wallet with new balance
+  receiver_wallet = await Wallet.findOneAndUpdate(
+    { user_id: receiver.id },
+    { balance: receiver_balance },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Transfer complete!",
+    data: { user_wallet, receiver_wallet },
   });
 });
