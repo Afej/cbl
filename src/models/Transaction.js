@@ -12,10 +12,32 @@ const transactionSchema = new mongoose.Schema(
       ref: "Wallet",
       required: true,
     },
-    action: {
+    type: {
       type: String,
       enum: ["deposit", "withdrawal", "transfer"],
       required: true,
+    },
+    details: {
+      from: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+      to: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+      made_by: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+      amount: {
+        type: Number,
+        required: true,
+      },
+      success: {
+        type: Boolean,
+        default: true,
+      },
     },
   },
   {

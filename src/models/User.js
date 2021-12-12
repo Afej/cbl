@@ -80,6 +80,13 @@ UserSchema.pre("remove", async function (next) {
   next();
 });
 
+// Cascade delete transactions when a user is deleted
+UserSchema.pre("remove", async function (next) {
+  // console.log(`transactions being removed from user ${this._id}`);
+  await this.model("Transaction").deleteMany({ user_id: this._id });
+  next();
+});
+
 // Reverse populate with virtuals
 UserSchema.virtual("wallet", {
   ref: "Wallet",

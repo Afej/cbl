@@ -4,6 +4,30 @@ const User = require("models/User");
 const Wallet = require("models/Wallet");
 const { addTransaction } = require("./transactions");
 
+// @desc      Get user wallet
+// @route     GET /api/v1/wallet
+// @access    Private/User
+exports.getWallet = asyncHandler(async (req, res, next) => {
+  const wallet = await Wallet.findOne({ user_id: req.user.id }).populate({
+    path: "transactions",
+    // select: "balance",
+  });
+
+  if (!wallet) {
+    return next(
+      new ErrorResponse(
+        `Wallet not found for user with id of ${req.user.id}`,
+        404
+      )
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    data: wallet,
+  });
+});
+
 // @desc      Deposit to user wallet
 // @route     POST /api/v1/wallet/deposit
 // @access    Private/User
@@ -45,8 +69,12 @@ exports.deposit = asyncHandler(async (req, res, next) => {
     }
   );
 
-  // add transaction
-  addTransaction(user, wallet, "deposit");
+  // add transaction details
+  const details = {
+    made_by: user.id,
+    amount,
+  };
+  addTransaction(user, wallet, "deposit", details);
 
   res.status(200).json({
     success: true,
@@ -101,7 +129,11 @@ exports.withdraw = asyncHandler(async (req, res, next) => {
   );
 
   // add transaction
-  addTransaction(user, wallet, "withdrawal");
+  const details = {
+    made_by: user.id,
+    amount,
+  };
+  addTransaction(user, wallet, "withdrawal", details);
 
   res.status(200).json({
     success: true,
@@ -201,7 +233,19 @@ exports.transfer = asyncHandler(async (req, res, next) => {
   );
 
   // add transaction
-  addTransaction(user, wallet, "transfer");
+  const transferDetails = {
+    from: user.id,
+    to: receiver.id,
+    amount,
+  };
+  addTransaction(user, user_wallet, "transfer", transferDetails);
+
+  // deposit transaction for receiver
+  const depositDetails = {
+    from: user.id,
+    amount,
+  };
+  addTransaction(receiver, receiver_wallet, "deposit", depositDetails);
 
   res.status(200).json({
     success: true,

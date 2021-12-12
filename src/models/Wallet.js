@@ -25,11 +25,11 @@ const walletSchema = new mongoose.Schema(
 );
 
 // Create a virtual field "user" to automatically retrieve the user
-// walletSchema.virtual("user", {
-//   ref: "User",
-//   localField: "user_id",
-//   foreignField: "_id",
-//   justOne: true,
-// });
+walletSchema.virtual("transactions", {
+  ref: "Transaction",
+  localField: "_id",
+  foreignField: "wallet_id",
+  justOne: false,
+});
 
 module.exports = mongoose.model("Wallet", walletSchema);

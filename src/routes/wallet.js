@@ -1,9 +1,16 @@
 const express = require("express");
-const { deposit, withdraw, transfer } = require("controllers/user/wallet");
-const { getTransactions } = require("controllers/user/transactions");
+const {
+  deposit,
+  withdraw,
+  transfer,
+  getWallet,
+} = require("controllers/user/wallet");
+const {
+  getAllTransactions,
+  getUserTransactions,
+} = require("controllers/user/transactions");
 
 const Transaction = require("models/Transaction");
-// const Wallet = require("models/Wallet");
 
 const router = express.Router({ mergeParams: true });
 
@@ -12,12 +19,17 @@ const { protect, authorize } = require("middleware/auth");
 
 router.use(protect);
 
+router.route("/").get(authorize("user"), getWallet);
 router.route("/deposit").post(authorize("user"), deposit);
 router.route("/withdraw").post(authorize("user"), withdraw);
 router.route("/transfer").post(authorize("user"), transfer);
 
 router
+  .route("/:walletId/transactions")
+  .get(authorize("user"), getUserTransactions);
+
+router
   .route("/transactions")
-  .get(authorize("user"), advancedResults(Transaction), getTransactions);
+  .get(authorize("admin"), advancedResults(Transaction), getAllTransactions);
 
 module.exports = router;
