@@ -88,4 +88,11 @@ UserSchema.virtual("wallet", {
   justOne: true,
 });
 
+UserSchema.virtual("transactions", {
+  ref: "Transaction",
+  localField: "_id",
+  foreignField: "user_id",
+  justOne: false,
+});
+
 module.exports = mongoose.model("User", UserSchema);

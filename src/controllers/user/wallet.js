@@ -2,6 +2,7 @@ const ErrorResponse = require("utils/errorResponse");
 const asyncHandler = require("middleware/async");
 const User = require("models/User");
 const Wallet = require("models/Wallet");
+const { addTransaction } = require("./transactions");
 
 // @desc      Deposit to user wallet
 // @route     POST /api/v1/wallet/deposit
@@ -43,6 +44,9 @@ exports.deposit = asyncHandler(async (req, res, next) => {
       runValidators: true,
     }
   );
+
+  // add transaction
+  addTransaction(user, wallet, "deposit");
 
   res.status(200).json({
     success: true,
@@ -95,6 +99,9 @@ exports.withdraw = asyncHandler(async (req, res, next) => {
       runValidators: true,
     }
   );
+
+  // add transaction
+  addTransaction(user, wallet, "withdrawal");
 
   res.status(200).json({
     success: true,
@@ -192,6 +199,9 @@ exports.transfer = asyncHandler(async (req, res, next) => {
       runValidators: true,
     }
   );
+
+  // add transaction
+  addTransaction(user, wallet, "transfer");
 
   res.status(200).json({
     success: true,

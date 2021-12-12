@@ -1,15 +1,21 @@
 const mongoose = require("mongoose");
 
-const walletSchema = new mongoose.Schema(
+const transactionSchema = new mongoose.Schema(
   {
     user_id: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
       required: true,
     },
-    balance: {
-      type: Number,
-      default: 0,
+    wallet_id: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Wallet",
+      required: true,
+    },
+    action: {
+      type: String,
+      enum: ["deposit", "withdrawal", "transfer"],
+      required: true,
     },
   },
   {
@@ -25,11 +31,11 @@ const walletSchema = new mongoose.Schema(
 );
 
 // Create a virtual field "user" to automatically retrieve the user
-// walletSchema.virtual("user", {
+// transactionSchema.virtual("user", {
 //   ref: "User",
 //   localField: "user_id",
 //   foreignField: "_id",
 //   justOne: true,
 // });
 
-module.exports = mongoose.model("Wallet", walletSchema);
+module.exports = mongoose.model("Transaction", transactionSchema);
