@@ -5,10 +5,14 @@ const {
   transfer,
   getWallet,
 } = require("controllers/user/wallet");
+
+const { getUserTransactions } = require("controllers/user/transactions");
+
 const {
   getAllTransactions,
-  getUserTransactions,
-} = require("controllers/user/transactions");
+  getTransaction,
+  reverseTransaction,
+} = require("controllers/admin/transactions");
 
 const Transaction = require("models/Transaction");
 
@@ -31,5 +35,10 @@ router
 router
   .route("/transactions")
   .get(authorize("admin"), advancedResults(Transaction), getAllTransactions);
+
+router
+  .route("/transactions/:transactionId")
+  .get(authorize("admin"), getTransaction)
+  .put(authorize("admin"), reverseTransaction);
 
 module.exports = router;

@@ -14,7 +14,7 @@ const transactionSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["deposit", "withdrawal", "transfer"],
+      enum: ["deposit", "withdrawal", "transfer", "reversal"],
       required: true,
     },
     details: {
@@ -34,6 +34,7 @@ const transactionSchema = new mongoose.Schema(
         type: Number,
         required: true,
       },
+      description: String,
       success: {
         type: Boolean,
         default: true,

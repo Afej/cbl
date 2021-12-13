@@ -2,7 +2,7 @@ const ErrorResponse = require("utils/errorResponse");
 const asyncHandler = require("middleware/async");
 const User = require("models/User");
 const Wallet = require("models/Wallet");
-const { addTransaction } = require("./transactions");
+const { addTransaction } = require("utils/addTransaction");
 
 // @desc      Get user wallet
 // @route     GET /api/v1/wallet
@@ -74,7 +74,7 @@ exports.deposit = asyncHandler(async (req, res, next) => {
     made_by: user.id,
     amount,
   };
-  addTransaction(user, wallet, "deposit", details);
+  addTransaction(user.id, wallet.id, "deposit", details);
 
   res.status(200).json({
     success: true,
@@ -133,7 +133,7 @@ exports.withdraw = asyncHandler(async (req, res, next) => {
     made_by: user.id,
     amount,
   };
-  addTransaction(user, wallet, "withdrawal", details);
+  addTransaction(user.id, wallet.id, "withdrawal", details);
 
   res.status(200).json({
     success: true,
@@ -238,14 +238,14 @@ exports.transfer = asyncHandler(async (req, res, next) => {
     to: receiver.id,
     amount,
   };
-  addTransaction(user, user_wallet, "transfer", transferDetails);
+  addTransaction(user.id, user_wallet.id, "transfer", transferDetails);
 
   // deposit transaction for receiver
   const depositDetails = {
     from: user.id,
     amount,
   };
-  addTransaction(receiver, receiver_wallet, "deposit", depositDetails);
+  addTransaction(receiver.id, receiver_wallet.id, "deposit", depositDetails);
 
   res.status(200).json({
     success: true,
