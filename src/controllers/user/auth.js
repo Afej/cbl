@@ -31,7 +31,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   // check if user account is active or disabled
   if (user.account_status !== "active") {
     return next(
-      new ErrorResponse("Account is disabled, contact an admin.", 401)
+      new ErrorResponse("Account is disabled, contact an Admin.", 401)
     );
   }
 
@@ -61,9 +61,10 @@ exports.getMe = asyncHandler(async (req, res, next) => {
     path: "wallet",
     select: "balance",
   });
-  
+
   res.status(200).json({
     success: true,
+    message: "User retrieved!",
     data: user,
   });
 });

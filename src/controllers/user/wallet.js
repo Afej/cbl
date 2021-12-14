@@ -24,6 +24,7 @@ exports.getWallet = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+    message: "User wallet retrieved!",
     data: wallet,
   });
 });
@@ -78,7 +79,7 @@ exports.deposit = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: "Deposit complete!",
+    message: "Deposit completed!",
     data: wallet,
   });
 });
@@ -137,7 +138,7 @@ exports.withdraw = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: "Withdrawal complete!",
+    message: "Withdrawal completed!",
     data: wallet,
   });
 });
@@ -249,7 +250,7 @@ exports.transfer = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: "Transfer complete!",
+    message: "Transfer completed!",
     data: { user_wallet, receiver_wallet },
   });
 });

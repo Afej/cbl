@@ -19,7 +19,10 @@ exports.getUserTransactions = asyncHandler(async (req, res, next) => {
     );
   }
 
-  res
-    .status(200)
-    .json({ success: true, count: transactions.length, data: transactions });
+  res.status(200).json({
+    success: true,
+    message: "User transactions retrieved!",
+    count: transactions.length,
+    data: transactions,
+  });
 });

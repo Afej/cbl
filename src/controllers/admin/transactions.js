@@ -2,7 +2,6 @@ const ErrorResponse = require("utils/errorResponse");
 const asyncHandler = require("middleware/async");
 const Transaction = require("models/Transaction");
 const Wallet = require("models/Wallet");
-const User = require("models/User");
 
 const addTransaction = require("utils/addTransaction");
 
@@ -28,7 +27,11 @@ exports.getTransaction = asyncHandler(async (req, res, next) => {
     );
   }
 
-  res.status(200).json({ success: true, data: transaction });
+  res.status(200).json({
+    success: true,
+    message: "Transaction retrieved!",
+    data: transaction,
+  });
 });
 
 // @desc     reverse wallet transaction
