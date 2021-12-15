@@ -55,6 +55,10 @@ node src/seeder -d
 
 ```
 
+## documentation
+
+[View Postman Documentation](https://documenter.getpostman.com/view/6355780/UVR7Mp3h)
+
 ## Author
 
 [Joshua Afekuro](https://github.com/afej)
