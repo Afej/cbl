@@ -1,13 +1,32 @@
-const dotenv = require("dotenv");
+/**
+ * Automatically loads all configurations and exports them
+ */
+const fs = require('fs');
+const path = require('path');
+const env = require('dotenv-extended');
+const convict = require('convict');
 
-// Load env vars
-dotenv.config({ path: "./src/config/.env" });
+env.load({
+  errorOnMissing: process.env.NODE_ENV === 'production',
+  path: '.env',
+  errorOnExtra: false,
+  includeProcessEnv: true,
+});
 
-module.exports = {
-  env: process.env.NODE_ENV,
-  port: process.env.PORT,
-  mongoURI: process.env.MONGO_URI,
-  jwt_secret: process.env.JWT_SECRET,
-  jwt_expiry: process.env.JWT_EXPIRY,
-  jwt_cookie_expiry: process.env.JWT_COOKIE_EXPIRY,
-};
+let serviceConfig = {};
+
+fs.readdirSync(__dirname)
+  .filter(
+    (file) => file !== path.basename(__filename) && path.extname(file) === '.js'
+  )
+  .forEach((file) => {
+    // eslint-disable-next-line
+    const config = require(path.join(__dirname, file));
+    serviceConfig = { ...serviceConfig, ...config };
+    serviceConfig = Object.assign(serviceConfig, config);
+  });
+
+const config = convict(serviceConfig);
+config.validate({ allowed: 'strict' });
+
+module.exports = config;

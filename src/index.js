@@ -1,15 +1,15 @@
-require("module-alias/register"); // module-alias
+require('module-alias/register');
 
-const app = require("./app");
+/**
+ * Runs the application
+ */
+const App = require('./App');
+const container = require('./container');
 
-const { port, env } = require("config");
+const app = new App(container.cradle);
 
-app.listen(
-  port,
-  console.log(`Server running in ${env} mode on port ${port}`.yellow.bold)
-);
+app.start();
 
-// Handle unhandled promise rejections
-process.on("unhandledRejection", (err, promise) => {
-  console.log(`Error: ${err.message}`.red);
-});
+process.on('SIGINT', app.shutdown.bind(app));
+
+process.on('SIGTERM', app.shutdown.bind(app));

@@ -1,15 +1,53 @@
-const mongoose = require("mongoose");
-const { mongoURI } = require("config");
-
-const connectDB = async () => {
-  const conn = await mongoose.connect(mongoURI, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-  });
-
-  console.log(`MongoDB Connected: ${conn.connection.host}`.cyan.underline.bold);
+const config = {
+  auth: {
+    doc: 'Database requires authentication',
+    format: Boolean,
+    default: true,
+    env: 'MONGO_AUTH',
+    sensitive: false,
+  },
+  port: {
+    doc: 'The mongo database port',
+    format: 'port',
+    default: 27017,
+    env: 'MONGO_PORT',
+    sensitive: false,
+  },
+  host: {
+    doc: 'The mongo database host',
+    format: '*',
+    default: 'localhost',
+    env: 'MONGO_HOST',
+    sensitive: false,
+  },
+  name: {
+    doc: 'The mongo database name',
+    format: '*',
+    default: '',
+    env: 'MONGO_NAME',
+    sensitive: true,
+  },
+  user: {
+    doc: 'The mongo database username',
+    format: '*',
+    default: '',
+    env: 'MONGO_USER',
+    sensitive: true,
+  },
+  password: {
+    doc: 'The mongo database password',
+    format: '*',
+    default: '',
+    env: 'MONGO_PASSWORD',
+    sensitive: true,
+  },
+  mongoURI: {
+    doc: 'The mongo database URI',
+    format: '*',
+    default: '',
+    env: 'MONGO_URI',
+    sensitive: true,
+  },
 };
 
-module.exports = connectDB;
+exports.db = config;

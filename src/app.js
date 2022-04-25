@@ -1,71 +1,37 @@
-const express = require("express");
-const path = require("path");
-const morgan = require("morgan");
-require("colors");
-const cookieParser = require("cookie-parser");
-const mongoSanitize = require("express-mongo-sanitize");
-const helmet = require("helmet");
-const xss = require("xss-clean");
-const rateLimit = require("express-rate-limit");
-const hpp = require("hpp");
-const cors = require("cors");
+/**
+ * Manages application interfaces e.g REST server, gRPC server
+ */
+class App {
+  constructor({ httpServer, logger, db }) {
+    this.httpServer = httpServer;
+    this.logger = logger;
+    this.db = db;
+  }
 
-const errorHandler = require("middleware/error");
-const { env } = require("config");
-const connectDB = require("config/db");
+  /**
+   * Starts the application interfaces to begin handling user requests
+   */
+  async start() {
+    // await this.db.connect();
+    await this.db();
+    await this.httpServer.start();
+  }
 
-// Connect to database
-connectDB();
-
-const app = express();
-
-// Route files
-const auth = require("routes/auth");
-const users = require("routes/users");
-const wallet = require("routes/wallet");
-
-// Body parser
-app.use(express.json());
-
-// Cookie parser
-app.use(cookieParser());
-
-// Dev logging middleware
-if (env === "development") {
-  app.use(morgan("dev"));
+  /**
+   * Closes the application's interfaces
+   */
+  shutdown() {
+    this.httpServer.close(async (err) => {
+      this.logger.info('Shutting down REST server');
+      if (err) {
+        this.logger.error('Error while shutting down server', {
+          error: err.toString(),
+        });
+      }
+      // await this.db.close();
+      process.exit(err ? 1 : 0);
+    });
+  }
 }
 
-// Sanitize data
-app.use(mongoSanitize());
-
-// Set security headers
-app.use(helmet());
-
-// Prevent XSS attacks
-app.use(xss());
-
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 mins
-  max: 100,
-});
-
-app.use(limiter);
-
-// Prevent http param pollution
-app.use(hpp());
-
-// Enable CORS
-app.use(cors());
-
-// Set static folder
-app.use(express.static(path.join(__dirname, "public")));
-
-// Mount routers
-app.use("/api/v1/auth", auth);
-app.use("/api/v1/users", users);
-app.use("/api/v1/wallet", wallet);
-
-app.use(errorHandler);
-
-module.exports = app;
+module.exports = App;
