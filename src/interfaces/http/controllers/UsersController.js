@@ -4,11 +4,11 @@ const BaseController = require('./BaseController');
 class UsersController extends BaseController {
   constructor({ createUser, deleteUser, getAllUsers, getUser, updateUser }) {
     super();
-    this.createUser = createUser;
-    this.deleteUser = deleteUser;
-    this.getAllUsers = getAllUsers;
-    this.getUser = getUser;
-    this.updateUser = updateUser;
+    this.createUserCtrl = createUser;
+    this.deleteUserCtrl = deleteUser;
+    this.getAllUsersCtrl = getAllUsers;
+    this.getUserCtrl = getUser;
+    this.updateUserCtrl = updateUser;
   }
 
   async createUser(req, res) {
@@ -18,50 +18,42 @@ class UsersController extends BaseController {
       'email',
       'password',
     ]);
-    const response = await this.createUser(payload);
+    const response = await this.createUserCtrl(payload);
     return this.responseBuilder
       .getResponseHandler(res)
       .onSuccess(response, 'User created successfully!');
   }
 
   async getAllUsers(req, res) {
-    const users = await this.getAllUsers();
-    return this.responseBuilder.onSuccess(
-      res,
-      'Successfully fetched all users',
-      users
-    );
+    const users = await this.getAllUsersCtrl();
+    return this.responseBuilder
+      .getResponseHandler(res)
+      .onSuccess(users, 'Successfully fetched all users');
   }
 
   async getUser(req, res) {
-    const { id } = req.params.id;
-    const user = await this.getUser(id);
-    return this.responseBuilder.onSuccess(
-      res,
-      'Successfully fetched user',
-      user
-    );
+    const { id } = req.params;
+    const user = await this.getUserCtrl(id);
+    return this.responseBuilder
+      .getResponseHandler(res)
+      .onSuccess(user, 'Successfully fetched user');
   }
 
   async updateUser(req, res) {
-    const { id } = req.params.id;
+    const { id } = req.params;
     const payload = req.body;
-    const user = await this.updateUser(id, payload);
-    return this.responseBuilder.onSuccess(
-      res,
-      'Successfully updated user',
-      user
-    );
+    const user = await this.updateUserCtrl(id, payload);
+    return this.responseBuilder
+      .getResponseHandler(res)
+      .onSuccess(user, 'Successfully updated user');
   }
 
   async deleteUser(req, res) {
-    const { id } = req.params.id;
-    const user = await this.deleteUser(id);
-    return this.responseBuilder.onSuccess(
-      res,
-      'Successfully deleted user',
-      user
-    );
+    const { id } = req.params;
+    const user = await this.deleteUserCtrl(id);
+    return this.responseBuilder
+      .getResponseHandler(res)
+      .onSuccess(user, 'Successfully deleted user');
   }
 }
 

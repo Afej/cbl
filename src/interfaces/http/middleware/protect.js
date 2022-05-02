@@ -1,11 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { asValue, Lifetime } = require('awilix');
-// const asyncHandler = require('./async');
 const ErrorResponse = require('utils/errorResponse');
-// const confit = require('config');
-// const User = require('models/User');
 
-// Protect routes
 
 class Auth {
   constructor({ userRepository, config, currentUser }) {
@@ -14,6 +10,7 @@ class Auth {
     this.currentUser = currentUser;
   }
 
+  // Protect routes
   async protect(req, res, next) {
     let token;
 
@@ -56,20 +53,6 @@ class Auth {
         new ErrorResponse('Not authorized to access this route', 401)
       );
     }
-  }
-
-  authorize(...roles) {
-    return (req, res, next) => {
-      if (!roles.includes(this.currentUser.role)) {
-        return next(
-          new ErrorResponse(
-            `User role \'${this.currentUser.role}'\ is not authorized to access this route`,
-            403
-          )
-        );
-      }
-      next();
-    };
   }
 }
 

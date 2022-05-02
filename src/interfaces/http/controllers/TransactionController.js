@@ -4,21 +4,21 @@ const BaseController = require('./BaseController');
 class TransactionController extends BaseController {
   constructor({ getTransaction, getAllTransactions, reverseTransaction }) {
     super();
-    this.getTransaction = getTransaction;
-    this.getAllTransactions = getAllTransactions;
-    this.reverseTransaction = reverseTransaction;
+    this.getTransactionCtrl = getTransaction;
+    this.getAllTransactionsCtrl = getAllTransactions;
+    this.reverseTransactionCtrl = reverseTransaction;
   }
 
   async getTransaction(req, res) {
     const transactionId = req.params.transactionId;
-    const transaction = await this.getTransaction(transactionId);
+    const transaction = await this.getTransactionCtrl(transactionId);
     return this.responseBuilder
       .getResponseHandler(res)
       .onSuccess(transaction, 'transaction fetched successfully!');
   }
 
   async getAllTransactions(req, res) {
-    const transactions = await this.getAllTransactions();
+    const transactions = await this.getAllTransactionsCtrl();
     return this.responseBuilder
       .getResponseHandler(res)
       .onSuccess(transactions, 'All transactions fetched successfully!');
@@ -27,12 +27,10 @@ class TransactionController extends BaseController {
   async reverseTransaction(req, res) {
     const transactionId = req.params.transactionId;
 
-    const transaction = await this.reverseTransaction(transactionId);
-    return this.responseBuilder.onSuccess(
-      res,
-      'Transfer reversal successful!',
-      transaction
-    );
+    const transaction = await this.reverseTransactionCtrl(transactionId);
+    return this.responseBuilder
+      .getResponseHandler(res)
+      .onSuccess(transaction, 'Transfer reversal successful!');
   }
 }
 

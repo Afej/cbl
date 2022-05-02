@@ -9,18 +9,15 @@ class AuthController extends BaseController {
   }
 
   async login(req, res) {
-    // const { email, password } = req.body;
     const payload = pick(req.body, ['email', 'password']);
 
     const response = await this.loginUser(payload);
-    // const response = await this.loginUser(email, password);
     return this.responseBuilder
       .getResponseHandler(res)
       .onSuccess(response, 'Log in successful!');
   }
 
   async getLoggedInUser(req, res) {
-    // console.log('getLoggedInUser');
     const user = await this.getLoggedUser();
     return this.responseBuilder
       .getResponseHandler(res)

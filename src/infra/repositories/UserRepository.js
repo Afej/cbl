@@ -18,7 +18,7 @@ class UserRepository extends BaseRepository {
       select: 'balance',
     });
 
-    console.log('get logged in user', user);
+    // console.log('get logged in user', user);
 
     if (!user) {
       throw new Error(`User not found with id ${id}`, 404);

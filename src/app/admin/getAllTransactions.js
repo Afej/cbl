@@ -1,5 +1,5 @@
 function getAllTransactions({ transactionRepository }) {
-  return () => transactionRepository.find();
+  return () => transactionRepository.find({}, {}, {}, true);
 }
 
 module.exports = getAllTransactions;

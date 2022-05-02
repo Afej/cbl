@@ -1,5 +1,5 @@
 const login = ({ userRepository }) => {
-  return async ({email, password}) => {
+  return async ({ email, password }) => {
     // console.log({ email, password });
     // Validate email & password
     if (!email || !password) {
@@ -30,7 +30,7 @@ const login = ({ userRepository }) => {
 
     return {
       token,
-      user,
+      // user,
     };
   };
 };

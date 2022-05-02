@@ -1,18 +1,22 @@
 const express = require('express');
 const { makeInvoker } = require('awilix-express');
 
+// const User = require('models/User');
+// const advancedResults = require('middleware/advancedResults');
+
 const UsersController = require('controllers/UsersController');
 const api = makeInvoker(UsersController);
 
-// const User = require('models/User');
+const Auth = require('middleware/protect');
+const authApi = makeInvoker(Auth);
+
+const authorize = require('middleware/authorize');
+const authorizeApi = makeInvoker(authorize);
 
 const router = express.Router({ mergeParams: true });
 
-// const advancedResults = require('middleware/advancedResults');
-// const { protect, authorize } = require('middleware/auth');
-
-// router.use(protect);
-// router.use(authorize('admin'));
+router.use(authApi('protect'));
+router.use(authorizeApi('admin'));
 
 // router
 //   .route('/')
@@ -21,11 +25,11 @@ const router = express.Router({ mergeParams: true });
 //       path: 'wallet',
 //       select: 'balance',
 //     }),
-//     getUsers
+//     api('getAllUsers')
 //   )
 //   .post(api('createUser'));
 
-router.route('/').get(api('getUsers')).post(api('createUser'));
+router.route('/').get(api('getAllUsers')).post(api('createUser'));
 
 router
   .route('/:id')

@@ -1,5 +1,5 @@
 function getAllUsers({ userRepository }) {
-  return () => userRepository.find();
+  return () => userRepository.find({}, {}, {}, true);
 }
 
 module.exports = getAllUsers;

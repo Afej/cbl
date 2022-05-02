@@ -1,7 +1,7 @@
 function updateUser({ userRepository }) {
   return (id, payload) =>
     userRepository.findOneAndUpdate(
-      { id },
+      { _id: id },
       { ...payload },
       { new: true, runValidators: true }
     );

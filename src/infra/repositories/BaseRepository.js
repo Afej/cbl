@@ -147,10 +147,13 @@ class BaseRepository {
    * @memberof BaseRepository
    */
   async findOneAndDelete(query = {}, options = {}) {
+    // console.log("qqq",query);
     if (query._id && !this.isValidId(query._id)) {
       throw new InvalidPayloadError(`Invalid ${this.modelName}Id`);
     }
     const document = await this.Collection.findOneAndDelete(query, options);
+
+    // console.log('show document', document);
 
     if (!document) {
       throw new ResourceNotFoundError(`${this.modelName} not found`);

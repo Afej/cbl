@@ -7,9 +7,14 @@ function transferFromWallet({
   return async ({ amount, receiver_email }) => {
     let wallet = await walletRepository.find({ user_id: currentUser.id });
 
+    // console.log({ wallet, currentUser });
+
     // check that receiver email is not logged in user email
     if (receiver_email === currentUser.email) {
-      new Error(`Unable to process transfer to logged in user account`, 400);
+      throw new Error(
+        `Unable to process transfer to logged in user account`,
+        400
+      );
     }
 
     // find receiver and retrieve details
@@ -68,29 +73,29 @@ function transferFromWallet({
       }
     );
 
-    // add transfer transaction for user
+    // add transfer transaction for wallet user
     const transferDetails = {
-      from: user.id,
+      from: currentUser.id,
       to: receiver.id,
       amount,
     };
 
     transactionRepository.addTransaction(
       currentUser.id,
-      wallet.id,
+      user_wallet.id,
       'transfer',
       transferDetails
     );
 
     // add deposit transaction for receiver
     const depositDetails = {
-      from: user.id,
+      from: currentUser.id,
       amount,
     };
 
     transactionRepository.addTransaction(
-      currentUser.id,
-      wallet.id,
+      receiver.id,
+      receiver_wallet.id,
       'deposit',
       depositDetails
     );
