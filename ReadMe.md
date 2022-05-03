@@ -22,11 +22,14 @@ A basic banking API service built using clean architecture with the following fe
 - Delete users
 - Reverse transactions(transfer)
 - Disable a user’s account (update user)
-- Get all users transaction
+- Get all users transactions
+- Get single user transaction
+
 
 ## Usage
 
-Add ".env" file to "/src/config/" and update the values/settings to your own, check "/src/config/sample_env.txt" for sample
+Create a `.env` file in the root directory.
+Copy the content of env.sample into the just created .env file, and add the appropriate values.
 
 ## Install Dependencies
 
