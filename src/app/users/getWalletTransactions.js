@@ -1,8 +1,6 @@
 function getWalletTransactions({ transactionRepository }) {
-  return (walletId) => {
-    console.log({ walletId });
+  return (walletId) =>
     transactionRepository.find({ wallet_id: walletId }, {}, {}, true);
-  };
 }
 
 module.exports = getWalletTransactions;

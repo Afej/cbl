@@ -1,6 +1,8 @@
 # Central Bank of Learnable
 
-A basic banking API service with the following features:
+## Node Clean Architecture
+
+A basic banking API service built using clean architecture with the following features:
 
 ### Users can :
 
